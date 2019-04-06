@@ -1,1 +1,6 @@
-
+{
+    "app": "inventory",
+    "allowed": [
+        "94-DE-80-91-6C-B7"
+    ]
+}
