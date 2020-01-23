@@ -1,2 +1,5 @@
 Google Drive Public Folder:
-https://bit.ly/2KizrVL
+bit.ly/2KizrVL
+
+GitHub Pages:
+judigot.github.io/main/
