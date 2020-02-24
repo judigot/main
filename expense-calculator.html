@@ -21,7 +21,8 @@ for (var i = 0; i < matches.length; i++) {
     var str = matches[i];
     total += str.substring(1, str.length - 1) + "+";
 }
-total = eval(total + "0").toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    total = eval(total + "0");
+    // total = eval(total + "0").toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 document.getElementById("total").innerHTML = "Total: ₱ " + total;
 
