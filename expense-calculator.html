@@ -55,7 +55,7 @@
     <textarea id="expenses"></textarea>
     <div id="gridContainer">
         <div id="tile1" class="tile">
-            <h2 id="total"></h2>
+            <h3 id="total"></h3>
         </div>
         <div id="tile2" class="tile">
             <button id="copy">Copy</button>
@@ -65,6 +65,14 @@
         <script>
 
             document.getElementById("expenses").focus();
+
+            document.getElementById("expenses").addEventListener('keydown', function () {
+                alert("keydown");
+            }, false);
+            document.getElementById("expenses").addEventListener('keypress', function () {
+                alert("keypress");
+            }, false);
+
 
             ['keyup', 'change', 'paste'].forEach(function (event) {
                 document.getElementById("expenses").addEventListener(event, compute, false);
