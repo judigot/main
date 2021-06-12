@@ -66,13 +66,7 @@
 
             document.getElementById("expenses").focus();
 
-            document.getElementById("expenses").addEventListener('keydown', function () {
-                alert("keydown");
-            }, false);
-            document.getElementById("expenses").addEventListener('keypress', function () {
-                alert("keypress");
-            }, false);
-
+            setInterval(compute, 1000);
 
             ['keyup', 'change', 'paste'].forEach(function (event) {
                 document.getElementById("expenses").addEventListener(event, compute, false);
