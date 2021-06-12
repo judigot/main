@@ -1,33 +1,37 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <body>
 
-<h1>Expense Calculator</h1>
+    <h1>Expense Calculator</h1>
 
-<textarea id="expenses" style="height: 200px; width: 100%"></textarea>
-<div><h2 id="total"></h2></div>
-<button onclick="compute()">Compute</button>
+    <textarea id="expenses" style="height: 200px; width: 100%"></textarea>
+    <div>
+        <h2 id="total"></h2>
+    </div>
+    <button onclick="compute()">Compute</button>
 
-<script>
-function compute() {
+    <script>
+        function compute() {
 
-var txt = document.getElementById("expenses").value;
-var regExp = /\(([^)]+)\)/g;
-var matches = txt.match(regExp);
+            var txt = document.getElementById("expenses").value;
+            var regExp = /\(([^)]+)\)/g;
+            var matches = txt.match(regExp);
 
-var total = "";
+            var total = "";
 
-for (var i = 0; i < matches.length; i++) {
-    var str = matches[i];
-    total += str.substring(1, str.length - 1) + "+";
-}
-    total = eval(total + "0");
-    // total = eval(total + "0").toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            for (var i = 0; i < matches.length; i++) {
+                var str = matches[i];
+                total += str.substring(1, str.length - 1) + "+";
+            }
+            total = eval(total + "0");
+            // total = eval(total + "0").toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-document.getElementById("total").innerHTML = "Total: ₱ " + total;
+            document.getElementById("total").innerHTML = "Total: ₱ " + total;
 
-}
-</script>
+        }
+    </script>
 
 </body>
+
 </html>
