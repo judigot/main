@@ -19,7 +19,7 @@
         }
 
         body {
-            font-size: 70%;
+            /* font-size: 70%; */
             display: block;
             overflow: auto;
         }
@@ -29,7 +29,7 @@
             border-radius: 10px;
         }
 
-        #text {
+        #expenses {
             height: 400px;
             width: 100%;
             resize: none;
@@ -51,42 +51,53 @@
 </head>
 
 <body>
-    <textarea id="text"></textarea>
+    <textarea id="expenses"></textarea>
     <div id="gridContainer">
-        <div id="tile1" class="tile"><i>Edited: <span id="lastEdited">...</span></i></div>
+        <div id="tile1" class="tile">
+            <h2 id="total"></h2>
+        </div>
         <div id="tile2" class="tile">
             <button id="copy">Copy</button>
             <button id="clear">Clear</button>
         </div>
 
         <script>
-            document.getElementById("text").addEventListener("keypress", function () {
-                pauseUpdates();
-            });
-            document.getElementById("text").addEventListener("keyup", function () {
-                if (document.getElementById("text").value !== currentNote) {
-                    pauseUpdates();
-                    resumeUpdates();
-                }
-            });
 
-            document.getElementById("text").addEventListener("keypress", function () {
-                clearTimeout(updateNoteTimeout);
-                clearInterval(checkForUpdatesInterval);
-            });
+            document.getElementById("expenses").focus();
+
+            document.getElementById("expenses").addEventListener("change", compute);
+
+            document.getElementById("expenses").addEventListener("keyup", compute);
 
             document.getElementById("copy").addEventListener("click", function () {
-                document.getElementById("text").select();
+                document.getElementById("expenses").select();
                 document.execCommand("copy");
-                document.getElementById("text").blur();
+                document.getElementById("expenses").blur();
             });
 
             document.getElementById("clear").addEventListener("click", function () {
-                pauseUpdates();
-                document.getElementById("text").value = "";
-                document.getElementById("text").blur();
-                resumeUpdates();
+                document.getElementById("expenses").value = "";
+                document.getElementById("expenses").blur();
+                document.getElementById("expenses").focus();
             });
+
+            function compute() {
+                var txt = document.getElementById("expenses").value;
+                var regExp = /\(([^)]+)\)/g;
+                var matches = txt.match(regExp);
+
+                var total = "";
+
+                for (var i = 0; i < matches.length; i++) {
+                    var str = matches[i];
+                    total += str.substring(1, str.length - 1) + "+";
+                }
+
+                total = eval(total + "0");
+
+                document.getElementById("total").innerHTML = "Total: ₱ " + total;
+
+            }
         </script>
 </body>
 
