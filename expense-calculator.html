@@ -1,14 +1,25 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!--Title-->
+    <title>Judepad</title>
+
+
     <style>
         * {
             outline: none;
         }
 
         body {
-            /* font-size: 70%; */
+            font-size: 70%;
             display: block;
             overflow: auto;
         }
@@ -18,7 +29,7 @@
             border-radius: 10px;
         }
 
-        #expenses {
+        #text {
             height: 400px;
             width: 100%;
             resize: none;
@@ -40,61 +51,138 @@
 </head>
 
 <body>
-
-    <h1>Expense Calculator</h1>
-
-    <textarea id="expenses"></textarea>
+    <textarea id="text"></textarea>
     <div id="gridContainer">
-        <div id="tile1" class="tile">
-            <h2 id="total"></h2>
-        </div>
+        <div id="tile1" class="tile"><i>Edited: <span id="lastEdited">...</span></i></div>
         <div id="tile2" class="tile">
             <button id="copy">Copy</button>
             <button id="clear">Clear</button>
         </div>
-    </div>
 
-    <script>
+        <script>
+            document.getElementById("text").addEventListener("keypress", function () {
+                pauseUpdates();
+            });
+            document.getElementById("text").addEventListener("keyup", function () {
+                if (document.getElementById("text").value !== currentNote) {
+                    pauseUpdates();
+                    resumeUpdates();
+                }
+            });
 
-        document.getElementById("expenses").focus();
+            document.getElementById("text").addEventListener("keypress", function () {
+                clearTimeout(updateNoteTimeout);
+                clearInterval(checkForUpdatesInterval);
+            });
 
-        document.getElementById("expenses").addEventListener("change", compute);
+            document.getElementById("copy").addEventListener("click", function () {
+                document.getElementById("text").select();
+                document.execCommand("copy");
+                document.getElementById("text").blur();
+            });
 
-        document.getElementById("expenses").addEventListener("keyup", compute);
+            document.getElementById("clear").addEventListener("click", function () {
+                pauseUpdates();
+                document.getElementById("text").value = "";
+                document.getElementById("text").blur();
+                resumeUpdates();
+            });
 
-        document.getElementById("copy").addEventListener("click", function () {
-            document.getElementById("expenses").select();
-            document.execCommand("copy");
-            document.getElementById("expenses").blur();
-        });
+            var updateNoteTimeout = "";
+            var checkForUpdatesInterval = "";
+            var editedDatetime = "";
+            var currentNote = "";
+            document.getElementById("text").focus();
+            getNote();
+            checkForUpdates();
 
-        document.getElementById("clear").addEventListener("click", function () {
-            document.getElementById("expenses").value = "";
-            document.getElementById("expenses").blur();
-            document.getElementById("expenses").focus();
-        });
-
-        function compute() {
-            var txt = document.getElementById("expenses").value;
-            var regExp = /\(([^)]+)\)/g;
-            var matches = txt.match(regExp);
-
-            var total = "";
-
-            for (var i = 0; i < matches.length; i++) {
-                var str = matches[i];
-                total += str.substring(1, str.length - 1) + "+";
+            function resumeUpdates() {
+                updateNoteTimeout = setTimeout(function () {
+                    setNote();
+                    checkForUpdates();
+                }, 1000);
             }
 
-            total = eval(total + "0");
+            function pauseUpdates() {
+                clearTimeout(updateNoteTimeout);
+                clearInterval(checkForUpdatesInterval);
+            }
 
-            document.getElementById("total").innerHTML = "Total: ₱ " + total;
+            function checkForUpdates() {
+                checkForUpdatesInterval = setInterval(function () {
+                    getNote();
+                }, 1000);
+            }
 
-        }
+            function setNote() {
+                $.ajax({
+                    url: "index.php",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        update: "updateNote",
+                        data: document.getElementById("text").value
+                    }
+                }).done(function (data) { }).fail(function (data) { });
+            }
+
+            function getNote() {
+                var method = "GET";
+                var data = {
+                    "read": "getNote",
+                    "data": "Tom & Jerry"
+                };
+                var request = ajax("index.php", method, data);
+                request.onload = function () {
+                    if (this.readyState === 4 && this.status === 200) { // Success!
+                        var data = JSON.parse(this.responseText);
+                        currentNote = data[0]["note_body"];
+                        editedDatetime = data[0]["note_edited"];
+                        document.getElementById("text").value = currentNote;
+
+                        var months = ["January", "February", "March", "April", "May", "June", "July",
+                            "August", "September", "October", "November", "December"
+                        ];
+                        var lastEdited = new Date(editedDatetime);
+                        var lastEditedString = `${months[lastEdited.getMonth()]} ${lastEdited.getDate()}, ${lastEdited.getFullYear()}`;
 
 
-    </script>
+                        var hours = lastEdited.getHours();
+                        var minutes = lastEdited.getMinutes();
+                        var ampm = hours >= 12 ? 'PM' : 'AM';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12; // the hour '0' should be '12'
+                        minutes = ('0' + minutes).slice(-2);
+                        var strTime = hours + ':' + minutes + ' ' + ampm;
+                        document.getElementById("lastEdited").innerHTML = `${lastEditedString}, at ${strTime}`;
+                    } else {
+                        alert("Error");
+                    }
+                }
+            }
 
+            function ajax(action, method, data) {
+                var url = action;
+                if (method === "GET") {
+                    var urlVariables = Object.keys(data);
+                    var urlData = Object.values(data);
+                    var urlParameters = urlVariables.map(function (value, i) {
+                        return `${value}=${encodeURIComponent(urlData[i])}`;
+                    }).join("&");
+                    url = `${action}?${(urlParameters)}`;
+                }
+                var request = new XMLHttpRequest();
+                request.open(method, url, true);
+                request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                if (method === "GET") {
+                    request.send();
+                } else if (method === "POST") {
+                    request.send(JSON.stringify(data));
+                }
+                return request;
+            }
+        </script>
 </body>
 
 </html>
