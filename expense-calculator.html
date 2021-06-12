@@ -66,9 +66,9 @@
 
             document.getElementById("expenses").focus();
 
-            document.getElementById("expenses").addEventListener("change", compute);
-
-            document.getElementById("expenses").addEventListener("keyup", compute);
+            ['keyup', 'change', 'paste'].forEach(function (event) {
+                document.getElementById("expenses").addEventListener(event, compute, false);
+            });
 
             document.getElementById("copy").addEventListener("click", function () {
                 document.getElementById("expenses").select();
