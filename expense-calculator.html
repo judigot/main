@@ -64,9 +64,9 @@
 
         <script>
 
-            document.getElementById("expenses").focus();
+            setInterval(compute, 500);
 
-            setInterval(compute, 1000);
+            document.getElementById("expenses").focus();
 
             ['keyup', 'change', 'paste'].forEach(function (event) {
                 document.getElementById("expenses").addEventListener(event, compute, false);
