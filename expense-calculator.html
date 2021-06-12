@@ -2,6 +2,40 @@
 <html>
 
 <head>
+    <style>
+        * {
+            outline: none;
+        }
+
+        body {
+            /* font-size: 70%; */
+            display: block;
+            overflow: auto;
+        }
+
+        button {
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        #expenses {
+            height: 400px;
+            width: 100%;
+            resize: none;
+            padding: 0px;
+            border-radius: 10px;
+        }
+
+        #gridContainer {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        #tile2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+    </style>
 
 </head>
 
@@ -10,10 +44,15 @@
     <h1>Expense Calculator</h1>
 
     <textarea id="expenses" style="height: 200px; width: 100%"></textarea>
-    <div>
-        <h2 id="total"></h2>
+    <div id="gridContainer">
+        <div id="tile1" class="tile">
+            <h2 id="total"></h2>
+        </div>
+        <div id="tile2" class="tile">
+            <button id="copy">Copy</button>
+            <button id="clear">Clear</button>
+        </div>
     </div>
-    <button onclick="compute()">Compute</button>
 
     <script>
 
@@ -22,6 +61,18 @@
         document.getElementById("expenses").addEventListener("change", compute);
 
         document.getElementById("expenses").addEventListener("keyup", compute);
+
+        document.getElementById("copy").addEventListener("click", function () {
+            document.getElementById("expenses").select();
+            document.execCommand("copy");
+            document.getElementById("expenses").blur();
+        });
+
+        document.getElementById("clear").addEventListener("click", function () {
+            document.getElementById("expenses").value = "";
+            document.getElementById("expenses").blur();
+            document.getElementById("expenses").focus();
+        });
 
         function compute() {
             var txt = document.getElementById("expenses").value;
