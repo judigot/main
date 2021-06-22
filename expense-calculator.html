@@ -16,6 +16,10 @@
     <style>
         * {
             outline: none;
+
+            /* Dark Mode */
+            color: #CCCCCC;
+            background-color: #222222;
         }
 
         body {
@@ -27,6 +31,8 @@
         button {
             height: 50px;
             border-radius: 10px;
+            background-color: #444444;
+
         }
 
         #expenses {
@@ -35,6 +41,9 @@
             resize: none;
             padding: 0px;
             border-radius: 10px;
+
+            /* Dark Mode */
+            background-color: #555555;
         }
 
         #gridContainer {
@@ -55,7 +64,10 @@
     <textarea id="expenses"></textarea>
     <div id="gridContainer">
         <div id="tile1" class="tile">
-            <h3 id="total"></h3>
+            <h3>
+                <span id="currency"></span>
+                <span id="total"></span>
+            </h3>
         </div>
         <div id="tile2" class="tile">
             <button id="copy">Copy</button>
@@ -70,6 +82,21 @@
 
             ['keyup', 'change', 'paste'].forEach(function (event) {
                 document.getElementById("expenses").addEventListener(event, compute, false);
+            });
+
+            ['currency', 'total'].forEach(function (element) {
+                document.getElementById(element).addEventListener("click", function () {
+                    var total = document.getElementById("total").innerHTML;
+
+                    var element = document.createElement('textarea');
+                    element.value = total;
+                    document.body.appendChild(element);
+                    element.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(element);
+
+                    alert(total);
+                });
             });
 
             document.getElementById("copy").addEventListener("click", function () {
@@ -98,7 +125,8 @@
 
                 total = eval(total + "0");
 
-                document.getElementById("total").innerHTML = "Total: ₱ " + total;
+                document.getElementById("currency").innerHTML = "Total: ₱ ";
+                document.getElementById("total").innerHTML = total;
 
             }
         </script>
