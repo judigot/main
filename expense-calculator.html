@@ -36,6 +36,7 @@
         }
 
         #expenses {
+            /* font-size: 20px; */
             height: 200px;
             width: 100%;
             resize: none;
@@ -67,6 +68,7 @@
             <h3>
                 <span id="currency"></span>
                 <span id="total"></span>
+                <p id="message"></p>
             </h3>
         </div>
         <div id="tile2" class="tile">
@@ -95,7 +97,15 @@
                     document.execCommand('copy');
                     document.body.removeChild(element);
 
-                    alert("Copied to clipboard");
+                    if (message) {
+                        clearTimeout(message);
+                    }
+
+                    document.getElementById("message").innerHTML = "Copied to clipboard";
+
+                    var message = setTimeout(() => {
+                        document.getElementById("message").innerHTML = "";
+                    }, 1000)
                 });
             });
 
@@ -112,21 +122,27 @@
 
             function compute() {
                 var txt = document.getElementById("expenses").value;
-                var regExp = /\(([^)]+)\)/g;
-                var matches = txt.match(regExp);
 
-                var total = "";
 
-                for (var i = 0; i < matches.length; i++) {
-                    var str = matches[i];
-                    total += str.substring(1, str.length - 1) + "+";
+                if (txt) {
+                    var regExp = /\(([^)]+)\)/g;
+                    var matches = txt.match(regExp);
+
+                    var total = "";
+
+                    for (var i = 0; i < matches.length; i++) {
+                        var str = matches[i];
+
+                        // Remove commas
+                        // str = parseFloat(str.replace(/,/g, ''));
+                        total += str.substring(1, str.length - 1) + "+";
+                    }
+
+                    total = eval(total + "0");
+
+                    document.getElementById("currency").innerHTML = "Total: ₱ ";
+                    document.getElementById("total").innerHTML = total;
                 }
-
-                total = eval(total + "0");
-
-                document.getElementById("currency").innerHTML = "Total: ₱ ";
-                document.getElementById("total").innerHTML = total;
-
             }
         </script>
 </body>
