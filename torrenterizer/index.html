@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Torrenterizer</title>
+    <style>
+      body {
+          text-align: center;
+          background-color: #111;
+          color: #555;
+          font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      }
+
+      #torrentQueryForm {
+          zoom: 200%;
+          margin: 0;
+          position: absolute;
+          top: 20%;
+          right: 50%;
+          transform: translateX(50%);
+      }
+
+      input {
+          width: 400px;
+          text-align: center;
+          background-color: #eee;
+      }
+
+      button {
+          cursor: pointer;
+          border-radius: 20%;
+          background-color: #555;
+      }
+    </style>
+  </head>
+
+  <body spellcheck="false">
+    <form id="torrentQueryForm" onsubmit="handleSubmit(event);">
+      <h1>Torrenterizer</h1>
+
+      <input type="text" id="query" name="query" />
+
+      <br />
+      <br />
+
+      <button id="submit">Search</button>
+    </form>
+
+    <script>
+      document.querySelector("#query").focus();
+
+      // Get cookie value
+      const queryCookie = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("torrenterizerQuery="))
+        ?.split("=")[1];
+
+      // Check if a query is saved in document cookie
+      if (queryCookie) {
+        document.querySelector("#query").value = queryCookie;
+      }
+
+      const handleSubmit = (parameter) => {
+        event.preventDefault();
+
+        const form = document.querySelector("#torrentQueryForm");
+
+        // Destructure object
+        const { query } = Object.fromEntries(new FormData(form).entries());
+
+        if (query) {
+          // Store query in document cookie; replace old cookie
+          document.cookie = `torrenterizerQuery=${query}`;
+
+          const queryWithPercent = query.split(" ").join("%");
+          const queryWithPlusSign = query.split(" ").join("+");
+          const queryWithPercentAndTwenty = query.split(" ").join("%20");
+
+          window.open(
+            `https://www.bitsearch.to/search?q=<query>`.replace(
+              "<query>",
+              queryWithPlusSign
+            )
+          );
+
+          window.open(
+            `https://rarbgmirrored.org/torrents.php?search=<query>`.replace(
+              "<query>",
+              queryWithPlusSign
+            )
+          );
+
+          window.open(
+            `https://www.1337xx.to/search/<query>/1/`.replace(
+              "<query>",
+              queryWithPercentAndTwenty
+            )
+          );
+
+          window.open(
+            `https://ext.to/search/?q=<query>`.replace(
+              "<query>",
+              queryWithPlusSign
+            )
+          );
+
+          window.open(
+            `https://btdig.com/search?q=<query>`.replace(
+              "<query>",
+              queryWithPlusSign
+            )
+          );
+
+          window.open(
+            `https://www1.thepiratebay3.to/s/?q=<query>`.replace(
+              "<query>",
+              queryWithPlusSign
+            )
+          );
+
+          window.open(
+            `https://thepiratebay.org/search.php?q=<query>`.replace(
+              "<query>",
+              queryWithPlusSign
+            )
+          );
+        }
+      };
+    </script>
+  </body>
+</html>
