@@ -1,150 +1,149 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
     <!--Title-->
     <title>Expense Calculator</title>
 
-
     <style>
-        * {
-            outline: none;
+      * {
+        outline: none;
 
-            /* Dark Mode */
-            color: #CCCCCC;
-            background-color: #222222;
-        }
+        /* Dark Mode */
+        color: #cccccc;
+        background-color: #222222;
+      }
 
-        body {
-            /* font-size: 70%; */
-            display: block;
-            overflow: auto;
-        }
+      body {
+        /* font-size: 70%; */
+        display: block;
+        overflow: auto;
+      }
 
-        button {
-            height: 50px;
-            border-radius: 10px;
-            background-color: #444444;
+      button {
+        height: 50px;
+        border-radius: 10px;
+        background-color: #444444;
+      }
 
-        }
+      #expenses {
+        /* font-size: 20px; */
+        height: 200px;
+        width: 100%;
+        resize: none;
+        padding: 0px;
+        border-radius: 10px;
 
-        #expenses {
-            /* font-size: 20px; */
-            height: 200px;
-            width: 100%;
-            resize: none;
-            padding: 0px;
-            border-radius: 10px;
+        /* Dark Mode */
+        background-color: #555555;
+      }
 
-            /* Dark Mode */
-            background-color: #555555;
-        }
+      #gridContainer {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
 
-        #gridContainer {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        #tile2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-        }
+      #tile2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
     </style>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <h1>Expense Calculator</h1>
     <textarea id="expenses"></textarea>
     <div id="gridContainer">
-        <div id="tile1" class="tile">
-            <h3>
-                <span id="currency"></span>
-                <span id="total"></span>
-                <p id="message"></p>
-            </h3>
-        </div>
-        <div id="tile2" class="tile">
-            <button id="copy">Copy</button>
-            <button id="clear">Clear</button>
-        </div>
+      <div id="tile1" class="tile">
+        <h3>
+          <span id="currency"></span>
+          <span id="total"></span>
+          <p id="message"></p>
+        </h3>
+      </div>
+      <div id="tile2" class="tile">
+        <button id="copy">Copy</button>
+        <button id="clear">Clear</button>
+      </div>
 
-        <script>
+      <script>
+        setInterval(compute, 500);
 
-            setInterval(compute, 500);
+        document.getElementById("expenses").focus();
 
-            document.getElementById("expenses").focus();
+        ["keyup", "change", "paste"].forEach(function (event) {
+          document
+            .getElementById("expenses")
+            .addEventListener(event, compute, false);
+        });
 
-            ['keyup', 'change', 'paste'].forEach(function (event) {
-                document.getElementById("expenses").addEventListener(event, compute, false);
+        ["currency", "total"].forEach(function (element) {
+          document
+            .getElementById(element)
+            .addEventListener("click", function () {
+              var total = document.getElementById("total").innerHTML;
+
+              var element = document.createElement("textarea");
+              element.value = total;
+              document.body.appendChild(element);
+              element.select();
+              document.execCommand("copy");
+              document.body.removeChild(element);
+
+              if (message) {
+                clearTimeout(message);
+              }
+
+              document.getElementById("message").innerHTML =
+                "Copied to clipboard";
+
+              var message = setTimeout(() => {
+                document.getElementById("message").innerHTML = "";
+              }, 1000);
             });
+        });
 
-            ['currency', 'total'].forEach(function (element) {
-                document.getElementById(element).addEventListener("click", function () {
-                    var total = document.getElementById("total").innerHTML;
+        document.getElementById("copy").addEventListener("click", function () {
+          document.getElementById("expenses").select();
+          document.execCommand("copy");
+          document.getElementById("expenses").blur();
+        });
 
-                    var element = document.createElement('textarea');
-                    element.value = total;
-                    document.body.appendChild(element);
-                    element.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(element);
+        document.getElementById("clear").addEventListener("click", function () {
+          document.getElementById("expenses").value = "";
+          document.getElementById("expenses").blur();
+        });
 
-                    if (message) {
-                        clearTimeout(message);
-                    }
+        function compute() {
+          var txt = document.getElementById("expenses").value;
 
-                    document.getElementById("message").innerHTML = "Copied to clipboard";
+          if (txt) {
+            var regExp = /\(([^)]+)\)/g;
+            var matches = txt.match(regExp);
 
-                    var message = setTimeout(() => {
-                        document.getElementById("message").innerHTML = "";
-                    }, 1000)
-                });
-            });
+            var total = "";
 
-            document.getElementById("copy").addEventListener("click", function () {
-                document.getElementById("expenses").select();
-                document.execCommand("copy");
-                document.getElementById("expenses").blur();
-            });
+            for (var i = 0; i < matches.length; i++) {
+              var str = matches[i];
 
-            document.getElementById("clear").addEventListener("click", function () {
-                document.getElementById("expenses").value = "";
-                document.getElementById("expenses").blur();
-            });
-
-            function compute() {
-                var txt = document.getElementById("expenses").value;
-
-
-                if (txt) {
-                    var regExp = /\(([^)]+)\)/g;
-                    var matches = txt.match(regExp);
-
-                    var total = "";
-
-                    for (var i = 0; i < matches.length; i++) {
-                        var str = matches[i];
-
-                        // Remove commas
-                        // str = parseFloat(str.replace(/,/g, ''));
-                        total += str.substring(1, str.length - 1) + "+";
-                    }
-
-                    total = eval(total + "0");
-
-                    document.getElementById("currency").innerHTML = "Total: ₱ ";
-                    document.getElementById("total").innerHTML = total;
-                }
+              // Remove commas
+              str = str.replace(/,/g, "");
+              total += str.substring(1, str.length - 1) + "+";
             }
-        </script>
-</body>
 
+            total = eval(total + "0");
+
+            document.getElementById("currency").innerHTML = "Total: ₱ ";
+            document.getElementById("total").innerHTML = total;
+          }
+        }
+      </script>
+    </div>
+  </body>
 </html>
