@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Torrenterizer</title>
+    <title>Torrenter</title>
     <style>
       body {
           text-align: center;
@@ -38,7 +38,7 @@
 
   <body spellcheck="false">
     <form id="torrentQueryForm" onsubmit="handleSubmit(event);">
-      <h1>Torrenterizer</h1>
+      <h1>Torrenter</h1>
 
       <input type="text" id="query" name="query" />
 
@@ -54,7 +54,7 @@
       // Get cookie value
       const queryCookie = document.cookie
         .split("; ")
-        .find((row) => row.startsWith("torrenterizerQuery="))
+        .find((row) => row.startsWith("torrenterQuery="))
         ?.split("=")[1];
 
       // Check if a query is saved in document cookie
@@ -72,7 +72,7 @@
 
         if (query) {
           // Store query in document cookie; replace old cookie
-          document.cookie = `torrenterizerQuery=${query}`;
+          document.cookie = `torrenterQuery=${query}`;
 
           const queryWithPercent = query.split(" ").join("%");
           const queryWithPlusSign = query.split(" ").join("+");
